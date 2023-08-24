@@ -1,0 +1,32 @@
+#!/usr/bin/env sh
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+##@Version           :  202308231902-git
+# @@Author           :  CasjaysDev
+# @@Contact          :  CasjaysDev <docker-admin@casjaysdev.pro>
+# @@License          :  MIT
+# @@ReadME           :
+# @@Copyright        :  Copyright 2023 CasjaysDev
+# @@Created          :  Wed Aug 23 07:02:47 PM EDT 2023
+# @@File             :  files"
+# @@Description      :  script run to files"
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# shellcheck shell=sh
+# shellcheck disable=SC2016
+# shellcheck disable=SC2031
+# shellcheck disable=SC2120
+# shellcheck disable=SC2155
+# shellcheck disable=SC2199
+# shellcheck disable=SC2317
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+set -ex
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+WWW_DIR="${WWW_DIR:-/usr/share/webapps/sqlite}"
+API_URL="https://api.bitbucket.org/2.0/repositories/phpliteadmin/public/downloads"
+VERSION="$(curl -q -LSsf -X GET --url "$API_URL" | jq -r '.values|.[].links.self.href' | grep -v 'lang' | grep 'v[0-9]' | sort -uVr | head -n1)"
+curl -q -LSsf "$VERSION" -o "/tmp/phpliteadmin.zip"
+mkdir -p "/tmp/phpliteadmin" && unzip -d "/tmp/phpliteadmin/" "/tmp/phpliteadmin.zip"
+mkdir -p "$WWW_DIR" && cp -Rfv "/tmp/phpliteadmin/." "$WWW_DIR/"
+curl -q -LSsf "https://bitbucket.org/phpliteadmin/public/raw/f2971be4c5c465d5cf03d1cfff8a49697ce3dde3/themes/PlasticNightmare/phpliteadmin.css" -o "$WWW_DIR/phpliteadmin.css"
+mkdir -p "/etc/phpliteadmin" && ln -sf "$WWW_DIR/phpliteadmin.config.php" "/etc/phpliteadmin/config.php"
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+exit
