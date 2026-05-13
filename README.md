@@ -19,17 +19,18 @@ dockermgr update sqlite
 ## Install and run container
   
 ```shell
-mkdir -p "$HOME/.local/share/srv/docker/sqlite/volumes"
+dockerHome="/var/lib/srv/$USER/docker/casjaysdevdocker/sqlite/sqlite/latest/rootfs"
+mkdir -p "/var/lib/srv/$USER/docker/sqlite/rootfs"
 git clone "https://github.com/dockermgr/sqlite" "$HOME/.local/share/CasjaysDev/dockermgr/sqlite"
-cp -Rfva "$HOME/.local/share/CasjaysDev/dockermgr/sqlite/rootfs/." "$HOME/.local/share/srv/docker/sqlite/volumes/"
+cp -Rfva "$HOME/.local/share/CasjaysDev/dockermgr/sqlite/rootfs/." "$dockerHome/"
 docker run -d \
 --restart always \
 --privileged \
---name casjaysdevdocker-sqlite \
+--name casjaysdevdocker-sqlite-latest \
 --hostname sqlite \
 -e TZ=${TIMEZONE:-America/New_York} \
--v $HOME/.local/share/srv/docker/casjaysdevdocker-sqlite/volumes/data:/data:z \
--v $HOME/.local/share/srv/docker/casjaysdevdocker-sqlite/volumes/config:/config:z \
+-v "$dockerHome/data:/data:z" \
+-v "$dockerHome/config:/config:z" \
 -p 80:80 \
 casjaysdevdocker/sqlite:latest
 ```
@@ -46,8 +47,8 @@ services:
       - TZ=America/New_York
       - HOSTNAME=sqlite
     volumes:
-      - $HOME/.local/share/srv/docker/casjaysdevdocker-sqlite/volumes/data:/data:z
-      - $HOME/.local/share/srv/docker/casjaysdevdocker-sqlite/volumes/config:/config:z
+      - "/var/lib/srv/$USER/docker/casjaysdevdocker/sqlite/sqlite/latest/rootfs/data:/data:z"
+      - "/var/lib/srv/$USER/docker/casjaysdevdocker/sqlite/sqlite/latest/rootfs/config:/config:z"
     ports:
       - 80:80
     restart: always
